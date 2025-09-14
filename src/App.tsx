@@ -35,12 +35,10 @@ function App() {
   const [mode, setMode] = useState<PracticeMode>("repeating");
   const [phase, setPhase] = useState<Phase>("idle");
   const [sentences, setSentence] = useState<Sentence[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentPlayIndex, setCurrentPlayIndex] = useState(0);
 
   const [progress, setProgress] = useState(0); // 進捗バーを管理する
   const waitTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null); // audio再生後の待機時間の進捗バーを管理する
-
-  const currentSentence = sentences[currentIndex];
 
   // 設定モーダル
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -71,6 +69,18 @@ function App() {
       setSelectedSections(allSections);
     }
   }, [sectionStats]);
+
+  // 選択したセクションの文だけを再生キューにする
+  const playQueue = useMemo(() => {
+    return sentences.filter((s) => selectedSections.includes(s.section));
+  }, [sentences, selectedSections]);
+
+  const currentSentence = playQueue[currentPlayIndex];
+
+  // 再生キューが変わったらインデックスをリセット
+  useEffect(() => {
+    setCurrentPlayIndex(0);
+  }, [selectedSections]);
 
   // セクションの選択・解除
   const toggleSection = (section: number) => {
@@ -136,7 +146,7 @@ function App() {
     if (!audio) return;
 
     audio.pause();
-    audio.src = `./audio/${sentences[index].audio}`;
+    audio.src = `./audio/${playQueue[index].audio}`;
 
     audio
       .play()
@@ -144,7 +154,7 @@ function App() {
         audio.currentTime = 0;
         setProgress(0);
         setPhase("playing");
-        console.log(`No.${sentences[index].no} を再生開始しました`);
+        console.log(`No.${playQueue[index].no} を再生開始しました`);
       })
       .catch((err) => {
         console.error("再生できませんでした:", err);
@@ -153,7 +163,7 @@ function App() {
 
   // ボタン押下で再生
   const handlePlayClick = () => {
-    playAudio(currentIndex);
+    playAudio(currentPlayIndex);
   };
 
   // ボタン押下で停止して最初に戻る
@@ -202,17 +212,17 @@ function App() {
 
   // 次の文を再生
   const handleNext = () => {
-    if (currentIndex < sentences.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      playAudio(currentIndex + 1);
+    if (currentPlayIndex < playQueue.length - 1) {
+      setCurrentPlayIndex(currentPlayIndex + 1);
+      playAudio(currentPlayIndex + 1);
     }
   };
 
   // 前の文を再生
   const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      playAudio(currentIndex - 1);
+    if (currentPlayIndex > 0) {
+      setCurrentPlayIndex(currentPlayIndex - 1);
+      playAudio(currentPlayIndex - 1);
     }
   };
 
@@ -292,7 +302,7 @@ function App() {
       </div>
 
       <div className="controls">
-        <button onClick={handlePrev} disabled={currentIndex === 0}>
+        <button onClick={handlePrev} disabled={currentPlayIndex === 0}>
           ＜
         </button>
         <button onClick={handlePlayClick} disabled={phase !== "idle"}>
@@ -303,7 +313,7 @@ function App() {
         </button>
         <button
           onClick={handleNext}
-          disabled={currentIndex === sentences.length - 1}
+          disabled={currentPlayIndex === playQueue.length - 1}
         >
           ＞
         </button>
