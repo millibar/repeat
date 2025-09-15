@@ -241,6 +241,7 @@ function App() {
         className="settings-button"
         onClick={() => setIsSettingsOpen(true)}
         disabled={phase !== "idle"}
+        aria-label="設定"
       >
         <SettingsButtonSVG />
       </button>
