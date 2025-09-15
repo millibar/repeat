@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, useMemo } from "react";
+import { makeSectionStats } from "./utils";
 import { Card } from "./components/Card";
 import { SettingsButtonSVG } from "./components/Svg";
 
-type Sentence = {
+export type Sentence = {
   no: number;
   japanese: string;
   english: string;
@@ -51,13 +52,7 @@ function App() {
   }, []);
 
   // セクションごとの文数を集計
-  const sectionStats = useMemo(() => {
-    const stats: Record<number, number> = {};
-    sentences.forEach((s) => {
-      stats[s.section] = (stats[s.section] || 0) + 1;
-    });
-    return stats;
-  }, [sentences]);
+  const sectionStats = useMemo(() => makeSectionStats(sentences), [sentences]);
 
   // 選択したセクションを管理
   const [selectedSections, setSelectedSections] = useState<number[]>([]);
