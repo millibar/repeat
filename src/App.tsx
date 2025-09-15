@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from "react";
-import { makeSectionStats } from "./utils";
+import { makeSectionStats, parseTSV } from "./utils";
 import { Card } from "./components/Card";
 import { SettingsButtonSVG } from "./components/Svg";
 
@@ -13,21 +13,6 @@ export type Sentence = {
 
 type PracticeMode = "repeating" | "shadowing";
 type Phase = "idle" | "playing" | "waiting";
-
-function parseTSV(data: string): Sentence[] {
-  const lines = data.trim().split("\n");
-  lines.shift(); // ヘッダー行を削除
-  return lines.map((line) => {
-    const [no, japanese, english, audio, section] = line.split("\t");
-    return {
-      no: parseInt(no, 10),
-      japanese,
-      english,
-      audio,
-      section: parseInt(section, 10),
-    };
-  });
-}
 
 function App() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
