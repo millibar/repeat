@@ -1,16 +1,29 @@
+import { useMemo } from "react";
+import { makeSectionStats } from "../utils";
+import type { Sentence } from "../types/index.ts";
+
 type SectionListProps = {
-  sectionStats: Record<number, number>;
+  sentences: Sentence[];
   selectedSections: number[];
-  toggleSection: (section: number) => void;
-  setSelectedSections: (sections: number[]) => void;
+  onChange: (sections: number[]) => void;
 };
 
 export function SectionList({
-  sectionStats,
+  sentences,
   selectedSections,
-  toggleSection,
-  setSelectedSections,
+  onChange,
 }: SectionListProps) {
+  // セクションごとの文数を集計
+  const sectionStats = useMemo(() => makeSectionStats(sentences), [sentences]);
+
+  // セクションの選択・解除
+  const toggleSection = (section: number) => {
+    const updated = selectedSections.includes(section)
+      ? selectedSections.filter((s) => s !== section) // 選択解除
+      : [...selectedSections, section]; // 選択
+    onChange(updated); // 親コンポーネントに通知
+  };
+
   const allSections = Object.keys(sectionStats).map((s) => Number(s));
   const selectedCount = selectedSections.length;
   const selectedSentences = selectedSections.reduce(
@@ -20,11 +33,7 @@ export function SectionList({
   const allSelected = selectedCount === allSections.length;
 
   const handleToggleAll = () => {
-    if (allSelected) {
-      setSelectedSections([]); // 全ての選択を解除
-    } else {
-      setSelectedSections(allSections); // 全てを選択
-    }
+    onChange(allSelected ? [] : allSections); // 親コンポーネントに通知
   };
 
   return (

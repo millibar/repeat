@@ -1,4 +1,4 @@
-import type { Sentence } from "./App";
+import type { Sentence } from "../src/types";
 
 export function makeSectionStats(
   sentences: Sentence[]

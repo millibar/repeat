@@ -1,16 +1,9 @@
-import { useEffect, useRef, useState, useMemo } from "react";
-import { makeSectionStats, parseTSV } from "./utils";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { parseTSV } from "./utils";
 import { Card } from "./components/Card";
 import { SectionList } from "./components/SectionList";
 import { SettingsButtonSVG } from "./components/Svg";
-
-export type Sentence = {
-  no: number;
-  japanese: string;
-  english: string;
-  audio: string;
-  section: number;
-};
+import type { Sentence } from "./types/index.ts";
 
 type PracticeMode = "repeating" | "shadowing";
 type Phase = "idle" | "playing" | "waiting";
@@ -21,7 +14,9 @@ function App() {
 
   const [mode, setMode] = useState<PracticeMode>("repeating");
   const [phase, setPhase] = useState<Phase>("idle");
+
   const [sentences, setSentence] = useState<Sentence[]>([]);
+  const [selectedSections, setSelectedSections] = useState<number[]>([1]);
   const [currentPlayIndex, setCurrentPlayIndex] = useState(0);
 
   const [progress, setProgress] = useState(0); // 進捗バーを管理する
@@ -34,22 +29,19 @@ function App() {
   useEffect(() => {
     fetch("./sentences.tsv")
       .then((res) => res.text())
-      .then((text) => setSentence(parseTSV(text)));
+      .then((text) => {
+        // 読み込み完了後、全てのセクションを選択状態にする
+        const parsed = parseTSV(text);
+        const allSections = Array.from(new Set(parsed.map((s) => s.section)));
+
+        setSentence(parsed);
+        setSelectedSections(allSections);
+      });
   }, []);
 
-  // セクションごとの文数を集計
-  const sectionStats = useMemo(() => makeSectionStats(sentences), [sentences]);
-
-  // 選択したセクションを管理
-  const [selectedSections, setSelectedSections] = useState<number[]>([]);
-
-  // 初回読み込み時に全セクションを選択状態にする
-  useEffect(() => {
-    if (sectionStats && Object.keys(sectionStats).length > 0) {
-      const allSections = Object.keys(sectionStats).map((s) => Number(s));
-      setSelectedSections(allSections);
-    }
-  }, [sectionStats]);
+  const handleChange = useCallback((sections: number[]) => {
+    setSelectedSections(sections);
+  }, []);
 
   // 選択したセクションの文だけを再生キューにする
   const playQueue = useMemo(() => {
@@ -62,16 +54,6 @@ function App() {
   useEffect(() => {
     setCurrentPlayIndex(0);
   }, [selectedSections]);
-
-  // セクションの選択・解除
-  const toggleSection = (section: number) => {
-    setSelectedSections(
-      (prev) =>
-        prev.includes(section)
-          ? prev.filter((s) => s !== section) // 選択解除
-          : [...prev, section] // 選択
-    );
-  };
 
   // 再生中のインジケーター更新
   useEffect(() => {
@@ -258,10 +240,9 @@ function App() {
           <menu className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>再生するSECTIONにチェック</h2>
             <SectionList
-              sectionStats={sectionStats}
+              sentences={sentences}
               selectedSections={selectedSections}
-              toggleSection={toggleSection}
-              setSelectedSections={setSelectedSections}
+              onChange={handleChange}
             />
             <label>
               <input type="checkbox" /> ランダムに再生する
