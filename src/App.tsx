@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { makeSectionStats, parseTSV } from "./utils";
 import { Card } from "./components/Card";
+import { SectionList } from "./components/SectionList";
 import { SettingsButtonSVG } from "./components/Svg";
 
 export type Sentence = {
@@ -246,30 +247,30 @@ function App() {
         <SettingsButtonSVG />
       </button>
       {isSettingsOpen && (
-        <div className="modal-overlay" onClick={() => setIsSettingsOpen(false)}>
+        <div
+          className="modal-overlay"
+          onClick={() => {
+            if (selectedSections.length > 0) {
+              setIsSettingsOpen(false);
+            }
+          }}
+        >
           <menu className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>再生するSECTIONにチェック</h2>
-            <ul>
-              {Object.entries(sectionStats).map(([section, count]) => {
-                const sectionNum = Number(section);
-                return (
-                  <li key={section}>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={selectedSections.includes(sectionNum)}
-                        onChange={() => toggleSection(sectionNum)}
-                      />
-                      SECTION {section} ({count})
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
+            <SectionList
+              sectionStats={sectionStats}
+              selectedSections={selectedSections}
+              toggleSection={toggleSection}
+              setSelectedSections={setSelectedSections}
+            />
             <label>
               <input type="checkbox" /> ランダムに再生する
             </label>
-            <button className="close" onClick={() => setIsSettingsOpen(false)}>
+            <button
+              className="close"
+              onClick={() => setIsSettingsOpen(false)}
+              disabled={selectedSections.length === 0}
+            >
               閉じる
             </button>
           </menu>

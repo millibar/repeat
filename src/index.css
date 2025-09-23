@@ -290,6 +290,11 @@ menu.modal-content button.close {
   border-radius: 0;
 }
 
+menu.modal-content button.close:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
 menu.modal-content h2 {
   background: transparent;
   color: #000;
@@ -306,6 +311,13 @@ menu.modal-content ul {
   margin: 0 0 1em;
   max-height: 60vh;
   overflow-y: auto;
+}
+
+menu.modal-content label.select-all {
+  display: block;
+  margin: 0;
+  padding: 0.5em 0;
+  cursor: pointer;
 }
 
 menu.modal-content li {
