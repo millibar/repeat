@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { parseTSV } from "./utils";
+import { parseTSV, shuffleArray } from "./utils";
 import { Card } from "./components/Card";
 import { SectionList } from "./components/SectionList";
 import { SettingsButtonSVG } from "./components/Svg";
@@ -14,6 +14,7 @@ function App() {
 
   const [mode, setMode] = useState<PracticeMode>("repeating");
   const [phase, setPhase] = useState<Phase>("idle");
+  const [isRandom, setIsRandom] = useState(false);
 
   const [sentences, setSentence] = useState<Sentence[]>([]);
   const [selectedSections, setSelectedSections] = useState<number[]>([1]);
@@ -45,8 +46,11 @@ function App() {
 
   // 選択したセクションの文だけを再生キューにする
   const playQueue = useMemo(() => {
-    return sentences.filter((s) => selectedSections.includes(s.section));
-  }, [sentences, selectedSections]);
+    const filtered = sentences.filter((s) =>
+      selectedSections.includes(s.section)
+    );
+    return isRandom ? shuffleArray(filtered) : filtered;
+  }, [sentences, selectedSections, isRandom]);
 
   const currentSentence = playQueue[currentPlayIndex];
 
@@ -245,7 +249,12 @@ function App() {
               onChange={handleChange}
             />
             <label>
-              <input type="checkbox" /> ランダムに再生する
+              <input
+                type="checkbox"
+                checked={isRandom}
+                onChange={(e) => setIsRandom(e.target.checked)}
+              />{" "}
+              ランダムに再生する
             </label>
             <button
               className="close"
