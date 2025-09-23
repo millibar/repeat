@@ -1,4 +1,5 @@
 import React from "react";
+import { EyeSVG } from "./Svg";
 
 type Language = "japanese" | "english";
 
@@ -12,6 +13,7 @@ export const Card: React.FC<CardProps> = ({ sentence, language }) => {
     <div className={`card ${language}`}>
       <label>
         <input type="checkbox" defaultChecked />
+        <EyeSVG />
         <span>{sentence}</span>
       </label>
     </div>

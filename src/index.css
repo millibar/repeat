@@ -134,14 +134,44 @@ div.card label {
   display: grid;
   grid-template-columns: 28px 1fr; /* チェックボックス固定、テキスト伸縮 */
   align-items: center;
+  position: relative;
 }
 
 div.card input[type="checkbox"] {
-  margin: 0 6px;
-  padding: 0;
+  display: none;
+}
+
+div.card input[type="checkbox"] + svg {
   width: 16px;
   height: 16px;
+  margin: 0 6px;
+  padding: 0;
+  color: #000;
+  visibility: hidden;
 }
+
+div.card input[type="checkbox"]:checked + svg {
+  visibility: visible;
+}
+
+div.card input[type="checkbox"] ~ span::before {
+  content: "";
+  display: block;
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+  background: #666;
+  position: absolute;
+  top: 50%;
+  left: 7px;
+  visibility: visible;
+}
+
+div.card input[type="checkbox"]:checked ~ span::before {
+  content: none;
+}
+
+
 
 div.card span {
   display: block;
@@ -150,10 +180,10 @@ div.card span {
   line-height: 1.4;
 }
 
-input[type="checkbox"] + span {
+input[type="checkbox"] ~ span {
   visibility: hidden;
 }
-input[type="checkbox"]:checked + span {
+input[type="checkbox"]:checked ~ span {
   visibility: visible;
 }
 
