@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { parseTSV, shuffleArray } from "./utils";
+import { parseTSV, shuffleArray, loadSettings, saveSettings } from "./utils";
 import { Card } from "./components/Card";
 import { SectionList } from "./components/SectionList";
 import { SettingsButtonSVG } from "./components/Svg";
@@ -17,7 +17,7 @@ function App() {
   const [isRandom, setIsRandom] = useState(false);
 
   const [sentences, setSentence] = useState<Sentence[]>([]);
-  const [selectedSections, setSelectedSections] = useState<number[]>([1]);
+  const [selectedSections, setSelectedSections] = useState<number[]>([]);
   const [currentPlayIndex, setCurrentPlayIndex] = useState(0);
 
   const [progress, setProgress] = useState(0); // 進捗バーを管理する
@@ -31,11 +31,27 @@ function App() {
     fetch("./sentences.tsv")
       .then((res) => res.text())
       .then((text) => {
-        // 読み込み完了後、全てのセクションを選択状態にする
         const parsed = parseTSV(text);
+        setSentence(parsed);
+
         const allSections = Array.from(new Set(parsed.map((s) => s.section)));
 
-        setSentence(parsed);
+        const saved = loadSettings();
+        if (saved) {
+          if (typeof saved.isRandom === "boolean") setIsRandom(saved.isRandom);
+          if (
+            Array.isArray(saved.selectedSections) &&
+            saved.selectedSections.length > 0
+          ) {
+            setSelectedSections(saved.selectedSections);
+          } else {
+            setSelectedSections(allSections);
+          }
+          console.log("設定を復元しました:", saved);
+          return;
+        }
+
+        // 保存データがない場合（returnされない）、全セクションを選択状態にする
         setSelectedSections(allSections);
       });
   }, []);
@@ -239,6 +255,10 @@ function App() {
             if (selectedSections.length > 0) {
               setIsSettingsOpen(false);
             }
+            saveSettings({
+              isRandom,
+              selectedSections,
+            });
           }}
         >
           <menu className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -258,7 +278,13 @@ function App() {
             </label>
             <button
               className="close"
-              onClick={() => setIsSettingsOpen(false)}
+              onClick={() => {
+                setIsSettingsOpen(false);
+                saveSettings({
+                  isRandom,
+                  selectedSections,
+                });
+              }}
               disabled={selectedSections.length === 0}
             >
               閉じる
