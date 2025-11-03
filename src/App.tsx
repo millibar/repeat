@@ -10,7 +10,6 @@ type Phase = "idle" | "playing" | "waiting";
 
 function App() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null); // audio再生後の待機時間を管理する
 
   const [mode, setMode] = useState<PracticeMode>("repeating");
   const [phase, setPhase] = useState<Phase>("idle");
@@ -20,8 +19,8 @@ function App() {
   const [selectedSections, setSelectedSections] = useState<number[]>([]);
   const [currentPlayIndex, setCurrentPlayIndex] = useState(0);
 
+  const rafRef = useRef<number | null>(null); // requestAnimationFrameのIDを保持する
   const [progress, setProgress] = useState(0); // 進捗バーを管理する
-  const waitTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null); // audio再生後の待機時間の進捗バーを管理する
 
   // 設定モーダル
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -75,55 +74,54 @@ function App() {
     setCurrentPlayIndex(0);
   }, [selectedSections]);
 
-  // 再生中のインジケーター更新
-  useEffect(() => {
+  // アニメーションフレームをクリア
+  const clearAnimation = () => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  };
+
+  // 再生中のプログレスバー更新ループ
+  const startPlayAnimation = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const updateProgress = () => {
-      if (audio.duration > 0) {
-        const percent = (audio.currentTime / audio.duration) * 100;
-        setProgress(Math.ceil(percent));
+    if (audio.duration > 0) {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      setProgress(Math.ceil(percent));
+      rafRef.current = requestAnimationFrame(startPlayAnimation);
+      if (percent >= 100) {
+        clearAnimation();
       }
-    };
-
-    audio.addEventListener("timeupdate", updateProgress);
-    return () => {
-      audio.removeEventListener("timeupdate", updateProgress);
-    };
-  }, []);
-
-  // 停止中の待ち時間インジケーター更新
-  const startWaitTimeProgress = (waitTime: number) => {
-    if (waitTimeRef.current) {
-      clearTimeout(waitTimeRef.current);
     }
+  };
 
-    let elapsed = 0;
-    const interval = 130; // 130msごとに更新
+  const startWaitAnimation = (waitTime: number) => {
+    clearAnimation();
+
+    const startTime = performance.now();
     setProgress(0);
 
-    waitTimeRef.current = setInterval(() => {
-      elapsed += interval;
+    // 待機中のプログレスバー更新ループ
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
       const percent = Math.min((elapsed / waitTime) * 100, 100);
       setProgress(Math.ceil(percent));
 
-      if (elapsed >= waitTime && waitTimeRef.current) {
-        clearInterval(waitTimeRef.current);
-        waitTimeRef.current = null;
+      if (elapsed < waitTime) {
+        rafRef.current = requestAnimationFrame(animate);
+      } else {
+        clearAnimation();
+        setProgress(100);
+        handleNext();
       }
-    }, interval);
+    };
+    rafRef.current = requestAnimationFrame(animate);
   };
 
   const playAudio = (index: number) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    if (waitTimeRef.current) {
-      clearInterval(waitTimeRef.current);
-      waitTimeRef.current = null;
-    }
+    clearAnimation();
 
     const audio = audioRef.current;
     if (!audio) return;
@@ -137,6 +135,7 @@ function App() {
         audio.currentTime = 0;
         setProgress(0);
         setPhase("playing");
+        startPlayAnimation();
         console.log(`No.${playQueue[index].no} を再生開始しました`);
       })
       .catch((err) => {
@@ -156,16 +155,7 @@ function App() {
       audio.pause();
       audio.currentTime = 0;
     }
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    if (waitTimeRef.current) {
-      clearInterval(waitTimeRef.current);
-      waitTimeRef.current = null;
-    }
-
+    clearAnimation();
     setPhase("idle");
     setProgress(0);
     console.log("再生を停止しました");
@@ -185,12 +175,11 @@ function App() {
     const waitTime =
       mode === "repeating" ? Math.ceil(audio.duration * 1000 - 1000) : 0;
 
-    startWaitTimeProgress(waitTime);
-
-    timeoutRef.current = setTimeout(() => {
+    if (waitTime > 0) {
+      startWaitAnimation(waitTime);
+    } else {
       handleNext();
-      timeoutRef.current = null;
-    }, waitTime);
+    }
   };
 
   // 次の文を再生
