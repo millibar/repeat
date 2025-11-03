@@ -187,6 +187,9 @@ function App() {
     if (currentPlayIndex < playQueue.length - 1) {
       setCurrentPlayIndex(currentPlayIndex + 1);
       playAudio(currentPlayIndex + 1);
+    } else {
+      setPhase("idle");
+      setProgress(0);
     }
   };
 
