@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { parseTSV, shuffleArray, loadSettings, saveSettings } from "./utils";
+import { Bookmark } from "./components/Bookmark";
 import { Card } from "./components/Card";
 import { SectionList } from "./components/SectionList";
 import { SettingsButtonSVG } from "./components/Svg";
@@ -312,7 +313,7 @@ function App() {
       {currentSentence && (
         <section className="sentence">
           <h2>SECTION {currentSentence.section}</h2>
-          <h3>No. {currentSentence.no}</h3>
+          <Bookmark currentSentenceNo={currentSentence.no} />
 
           <Card sentence={currentSentence.english} language="english" />
           <Card sentence={currentSentence.japanese} language="japanese" />

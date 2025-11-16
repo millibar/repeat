@@ -136,11 +136,27 @@ h2 {
   text-align: right;
 }
 
-h3 {
+h3.bookmark {
   margin: 0;
   padding: 0.3em 8px;
   font-weight: normal;
   font-size: 0.9rem;
+}
+
+h3.bookmark svg {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 4px;
+  fill: var(--color-text-disabled);
+}
+
+h3.bookmark input[type="checkbox"] {
+  display: none;
+}
+
+h3.bookmark input[type="checkbox"]:checked + svg {
+  fill: var(--color-accent);
 }
 
 div.card {
