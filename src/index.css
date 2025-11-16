@@ -45,23 +45,100 @@ main {
 div.mode {
   display: flex;
   margin: 0 8px;
-  padding: 0.5em 0;
-  justify-content: flex-end;
+  padding: 1em 0 0.5em;
+  justify-content: flex-start;
 }
 
 div.mode label {
-  margin-left: 1em;
-  font-size: 0.9em;
+  font-weight: bold;
+  margin: 0;
+  padding: 0.2em 1em;
+  font-size: 1em;
   cursor: pointer;
   color: var(--color-text-disabled);
 }
 
+div.mode input[type="radio"] {
+  display: none;
+}
+
 label:has(input[type="radio"]:checked) {
   color: var(--color-text);
+  border-bottom: 4px solid var(--color-primary);
 }
 
 label:has(input[type="radio"]:disabled) {
   cursor: not-allowed;
+}
+
+button.calendar-button,
+button.settings-button {
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  color: var(--color-primary);
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: 1rem;
+  border-radius: 0;
+}
+
+button.calendar-button {
+  right: 48px;
+}
+
+button.settings-button {
+  right: 8px; 
+}
+
+button.calendar-button:disabled,
+button.settings-button:disabled {
+  cursor: not-allowed;
+}
+
+button.calendar-button svg,
+button.settings-button svg {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+  filter: drop-shadow(0 1px 1px #ccc);
+}
+
+button.calendar-button:disabled svg,
+button.settings-button:disabled svg {
+  filter: none;
+}
+
+div.options {
+  margin: 0.5em 8px 0.1em;
+  padding: 0;
+}
+
+div.options svg {
+  margin-left: 0.5em;
+}
+
+label.toggle svg {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  fill: var(--color-text-disabled);
+}
+
+label.toggle.shuffle svg {
+  width: 28px;
+  height: 28px;
+}
+
+label.toggle input[type="checkbox"] {
+  display: none;
+}
+
+label.toggle input[type="checkbox"]:checked + svg {
+  fill: var(--color-text);
 }
 
 div.progress {
@@ -113,21 +190,6 @@ progress.waiting::-moz-progress-bar{
 
 h1 {
   margin: 0;
-  padding: 1em 8px;
-  font-size: 1em;
-  font-weight: bold;
-  /* background: #595db3;
-  color: #eed876;
-  box-shadow: 0 4px  8px #ccc; */
-}
-
-h1 span {
-  font-size: 0.9em;
-  font-weight: normal;
-}
-
-h2 {
-  margin: 0;
   padding: 0.25em 8px;
   background: var(--color-primary);
   color: var(--color-text-contrast);
@@ -136,26 +198,21 @@ h2 {
   text-align: right;
 }
 
-h3.bookmark {
+h2.bookmark {
   margin: 0;
   padding: 0.3em 8px;
   font-weight: normal;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
-h3.bookmark svg {
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
+h2.bookmark svg {
+  width: 22px;
+  height: 22px;
+  vertical-align: top;
   margin-right: 4px;
-  fill: var(--color-text-disabled);
 }
 
-h3.bookmark input[type="checkbox"] {
-  display: none;
-}
-
-h3.bookmark input[type="checkbox"]:checked + svg {
+h2.bookmark input[type="checkbox"]:checked + svg {
   fill: var(--color-accent);
 }
 
@@ -284,35 +341,6 @@ button:disabled {
 }
 
 
-button.settings-button {
-  font-size: 1em;
-  padding: 0;
-  margin: 0;
-  color: #eee;
-  background: transparent;
-  border: none;
-  width: 32px;
-  height: 32px;
-  position: absolute;
-  top: 12px;
-  right: 8px;
-  border-radius: 0;
-}
-
-button.settings-button:disabled {
-  cursor: not-allowed;
-}
-
-button.settings-button svg {
-  width: 28px;
-  height: 28px;
-  vertical-align: middle;
-  filter: drop-shadow(0 1px 1px #444);
-}
-
-button.settings-button:disabled svg {
-  filter: none;
-}
 
 .modal-overlay {
   position: fixed;

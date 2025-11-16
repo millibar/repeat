@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { parseTSV, shuffleArray, loadSettings, saveSettings } from "./utils";
-import { Bookmark } from "./components/Bookmark";
+import { ToggleSVG } from "./components/ToggleSVG";
 import { Card } from "./components/Card";
 import { SectionList } from "./components/SectionList";
-import { SettingsButtonSVG } from "./components/Svg";
+import {
+  SettingsButtonSVG,
+  CalendarSVG,
+  RepeatOneSVG,
+  ShuffleSVG,
+  BookmarkSVG,
+} from "./components/Svg";
 import type { Sentence } from "./types/index.ts";
 
 type PracticeMode = "repeating" | "shadowing";
@@ -14,6 +20,7 @@ function App() {
 
   const [mode, setMode] = useState<PracticeMode>("repeating");
   const [phase, setPhase] = useState<Phase>("idle");
+  const [isRepeatOne, setIsRepeatOne] = useState(false);
   const [isRandom, setIsRandom] = useState(false);
 
   const [sentences, setSentence] = useState<Sentence[]>([]);
@@ -204,10 +211,6 @@ function App() {
 
   return (
     <main className="app">
-      <h1>
-        りぴーと！ <span>- Repeating &amp; Shadowing -</span>
-      </h1>
-
       <div className="mode">
         <label>
           <input
@@ -232,6 +235,14 @@ function App() {
           Shadowing
         </label>
       </div>
+
+      <button
+        className="calendar-button"
+        disabled={phase !== "idle"}
+        aria-label="学習履歴"
+      >
+        <CalendarSVG />
+      </button>
 
       <button
         className="settings-button"
@@ -261,14 +272,7 @@ function App() {
               selectedSections={selectedSections}
               onChange={handleChange}
             />
-            <label>
-              <input
-                type="checkbox"
-                checked={isRandom}
-                onChange={(e) => setIsRandom(e.target.checked)}
-              />{" "}
-              ランダムに再生する
-            </label>
+
             <button
               className="close"
               onClick={() => {
@@ -287,6 +291,22 @@ function App() {
       )}
 
       <audio ref={audioRef} onEnded={handleEnded} preload="auto" />
+
+      <div className="options">
+        {currentPlayIndex + 1} / {playQueue.length}{" "}
+        <ToggleSVG
+          SVG={RepeatOneSVG}
+          checked={isRepeatOne}
+          onChange={setIsRepeatOne}
+          className="repeat-one"
+        />
+        <ToggleSVG
+          SVG={ShuffleSVG}
+          checked={isRandom}
+          onChange={setIsRandom}
+          className="shuffle"
+        />
+      </div>
 
       <div className="progress">
         <progress className={phase} value={progress} max={100} />
@@ -312,8 +332,15 @@ function App() {
 
       {currentSentence && (
         <section className="sentence">
-          <h2>SECTION {currentSentence.section}</h2>
-          <Bookmark currentSentenceNo={currentSentence.no} />
+          <h1>SECTION {currentSentence.section}</h1>
+          <h2 className="bookmark">
+            <ToggleSVG
+              SVG={BookmarkSVG}
+              checked={isRepeatOne}
+              onChange={setIsRepeatOne}
+              text={`No. ${currentSentence.no}`}
+            />
+          </h2>
 
           <Card sentence={currentSentence.english} language="english" />
           <Card sentence={currentSentence.japanese} language="japanese" />
