@@ -299,12 +299,14 @@ function App() {
           checked={isRepeatOne}
           onChange={setIsRepeatOne}
           className="repeat-one"
+          disabled={phase !== "idle"}
         />
         <ToggleSVG
           SVG={ShuffleSVG}
           checked={isRandom}
           onChange={setIsRandom}
           className="shuffle"
+          disabled={phase !== "idle"}
         />
       </div>
 

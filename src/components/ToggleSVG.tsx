@@ -6,6 +6,7 @@ type ToggleSVGProps = {
   onChange: (checked: boolean) => void;
   text?: string;
   className?: string;
+  disabled?: boolean;
 };
 
 export const ToggleSVG: React.FC<ToggleSVGProps> = ({
@@ -14,6 +15,7 @@ export const ToggleSVG: React.FC<ToggleSVGProps> = ({
   onChange,
   text,
   className,
+  disabled,
 }) => {
   return (
     <label className={`toggle ${className || ""}`}>
@@ -21,6 +23,7 @@ export const ToggleSVG: React.FC<ToggleSVGProps> = ({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
+        disabled={disabled}
       />
       <SVG />
       {text && <span>{text}</span>}

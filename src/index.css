@@ -13,6 +13,8 @@
 
   --color-progress-idle: #eee;
   --color-progress-playing: #6b9ad8;
+
+  --color-drop-shadow: rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -46,13 +48,13 @@ div.mode {
   display: flex;
   margin: 0 8px;
   padding: 1em 0 0.5em;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 div.mode label {
   font-weight: bold;
   margin: 0;
-  padding: 0.2em 1em;
+  padding: 0.2em 0.8em;
   font-size: 1em;
   cursor: pointer;
   color: var(--color-text-disabled);
@@ -104,7 +106,7 @@ button.settings-button svg {
   width: 28px;
   height: 28px;
   vertical-align: middle;
-  filter: drop-shadow(0 1px 1px #ccc);
+  filter: drop-shadow(0 1px 1px var(--color-drop-shadow));
 }
 
 button.calendar-button:disabled svg,
@@ -126,6 +128,7 @@ label.toggle svg {
   height: 32px;
   vertical-align: middle;
   fill: var(--color-text-disabled);
+  filter: drop-shadow(0 1px 1px var(--color-drop-shadow));
 }
 
 label.toggle.shuffle svg {
@@ -139,6 +142,10 @@ label.toggle input[type="checkbox"] {
 
 label.toggle input[type="checkbox"]:checked + svg {
   fill: var(--color-text);
+}
+
+label.toggle input[type="checkbox"]:disabled + svg {
+  filter: none;
 }
 
 div.progress {
@@ -332,7 +339,7 @@ button:disabled {
 }
 
 .controls button {
-  box-shadow: 0 2px 3px #ddd;
+  box-shadow: 0 2px 3px var(--color-drop-shadow);
 }
 
 .controls button:disabled {
