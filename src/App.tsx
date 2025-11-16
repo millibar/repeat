@@ -195,6 +195,11 @@ function App() {
 
   // 次の文を再生
   const handleNext = () => {
+    if (isRepeatOne) {
+      playAudio(currentPlayIndex);
+      return;
+    }
+
     if (currentPlayIndex < playQueue.length - 1) {
       setCurrentPlayIndex(currentPlayIndex + 1);
       playAudio(currentPlayIndex + 1);
