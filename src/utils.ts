@@ -40,8 +40,8 @@ const USE_LOCAL_STORAGE = true; // localStorageに設定を保存するか（開
 const STORAGE_KEY = "appState";
 
 export type AppSettings = {
-  isRandom: boolean;
   selectedSections: number[];
+  bookmarks: number[];
 };
 
 export function saveSettings(settings: AppSettings) {

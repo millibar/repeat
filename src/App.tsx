@@ -26,6 +26,7 @@ function App() {
   const [sentences, setSentence] = useState<Sentence[]>([]);
   const [selectedSections, setSelectedSections] = useState<number[]>([]);
   const [currentPlayIndex, setCurrentPlayIndex] = useState(0);
+  const [bookmarks, setBookmarks] = useState<Set<number>>(new Set());
 
   const rafRef = useRef<number | null>(null); // requestAnimationFrameのIDを保持する
   const [progress, setProgress] = useState(0); // 進捗バーを管理する
@@ -45,7 +46,6 @@ function App() {
 
         const saved = loadSettings();
         if (saved) {
-          if (typeof saved.isRandom === "boolean") setIsRandom(saved.isRandom);
           if (
             Array.isArray(saved.selectedSections) &&
             saved.selectedSections.length > 0
@@ -53,6 +53,9 @@ function App() {
             setSelectedSections(saved.selectedSections);
           } else {
             setSelectedSections(allSections);
+          }
+          if (Array.isArray(saved.bookmarks) && saved.bookmarks.length > 0) {
+            setBookmarks(new Set(saved.bookmarks));
           }
           console.log("設定を復元しました:", saved);
           return;
@@ -209,6 +212,25 @@ function App() {
     }
   };
 
+  // ブックマークのON/OFF切り替え
+  const toggleBookmark = (sentenceNo: number) => {
+    setBookmarks((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(sentenceNo)) {
+        newSet.delete(sentenceNo);
+      } else {
+        newSet.add(sentenceNo);
+      }
+
+      saveSettings({
+        selectedSections,
+        bookmarks: Array.from(newSet),
+      });
+
+      return newSet;
+    });
+  };
+
   return (
     <main className="app">
       <div className="mode">
@@ -260,8 +282,8 @@ function App() {
               setIsSettingsOpen(false);
             }
             saveSettings({
-              isRandom,
               selectedSections,
+              bookmarks: Array.from(bookmarks),
             });
           }}
         >
@@ -278,8 +300,8 @@ function App() {
               onClick={() => {
                 setIsSettingsOpen(false);
                 saveSettings({
-                  isRandom,
                   selectedSections,
+                  bookmarks: Array.from(bookmarks),
                 });
               }}
               disabled={selectedSections.length === 0}
@@ -338,8 +360,8 @@ function App() {
           <h2 className="bookmark">
             <ToggleSVG
               SVG={BookmarkSVG}
-              checked={isRepeatOne}
-              onChange={setIsRepeatOne}
+              checked={bookmarks.has(currentSentence.no)}
+              onChange={() => toggleBookmark(currentSentence.no)}
               text={`No. ${currentSentence.no}`}
             />
           </h2>
