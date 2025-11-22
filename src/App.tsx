@@ -209,11 +209,23 @@ function App() {
     }
   };
 
+  const goToNext = () => {
+    if (currentPlayIndex < playQueue.length - 1) {
+      setCurrentPlayIndex((i) => i + 1);
+    }
+  };
+
   // 前の文を再生
   const handlePrev = () => {
     if (currentPlayIndex > 0) {
       setCurrentPlayIndex(currentPlayIndex - 1);
       playAudio(currentPlayIndex - 1);
+    }
+  };
+
+  const goToPrev = () => {
+    if (currentPlayIndex > 0) {
+      setCurrentPlayIndex((i) => i - 1);
     }
   };
 
@@ -342,7 +354,16 @@ function App() {
       </div>
 
       <div className="controls">
-        <button onClick={handlePrev} disabled={currentPlayIndex === 0}>
+        <button
+          onClick={() => {
+            if (phase !== "idle") {
+              handlePrev();
+            } else {
+              goToPrev();
+            }
+          }}
+          disabled={currentPlayIndex === 0}
+        >
           ＜
         </button>
         <button onClick={handlePlayClick} disabled={phase !== "idle"}>
@@ -352,7 +373,12 @@ function App() {
           ■
         </button>
         <button
-          onClick={handleNext}
+          onClick={() => {
+            goToNext();
+            if (phase !== "idle") {
+              playAudio(currentPlayIndex + 1);
+            }
+          }}
           disabled={currentPlayIndex === playQueue.length - 1}
         >
           ＞
