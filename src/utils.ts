@@ -41,14 +41,28 @@ const STORAGE_KEY = "appState";
 
 export type AppSettings = {
   selectedSections: number[];
+  isRandom: boolean;
+  currentPlayIndex: number;
+  playQueue: number[];
   bookmarks: number[];
 };
 
-export function saveSettings(settings: AppSettings) {
+export function saveSettings(settings: Partial<AppSettings>) {
   if (!USE_LOCAL_STORAGE) return;
+
+  const current = loadSettings() || {
+    selectedSections: [],
+    isRandom: false,
+    currentPlayIndex: 0,
+    playQueue: [],
+    bookmarks: [],
+  };
+
+  const merged = { ...current, ...settings };
+
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    console.log("設定を保存しました:", settings);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    console.log("設定を保存しました:", merged);
   } catch (e) {
     console.error("設定の保存に失敗しました:", e);
   }

@@ -51,11 +51,22 @@ function App() {
             saved.selectedSections.length > 0
           ) {
             setSelectedSections(saved.selectedSections);
-          } else {
-            setSelectedSections(allSections);
           }
+
+          if (Array.isArray(saved.playQueue) && saved.playQueue.length > 0) {
+            // ToDo: playQueueの復元ロジックを実装する
+          }
+
           if (Array.isArray(saved.bookmarks) && saved.bookmarks.length > 0) {
             setBookmarks(new Set(saved.bookmarks));
+          }
+
+          if (typeof saved.isRandom === "boolean") {
+            setIsRandom(saved.isRandom);
+          }
+
+          if (typeof saved.currentPlayIndex === "number") {
+            setCurrentPlayIndex(saved.currentPlayIndex);
           }
           console.log("設定を復元しました:", saved);
           return;
@@ -240,7 +251,6 @@ function App() {
       }
 
       saveSettings({
-        selectedSections,
         bookmarks: Array.from(newSet),
       });
 
@@ -300,7 +310,6 @@ function App() {
             }
             saveSettings({
               selectedSections,
-              bookmarks: Array.from(bookmarks),
             });
           }}
         >
@@ -318,7 +327,6 @@ function App() {
                 setIsSettingsOpen(false);
                 saveSettings({
                   selectedSections,
-                  bookmarks: Array.from(bookmarks),
                 });
               }}
               disabled={selectedSections.length === 0}
