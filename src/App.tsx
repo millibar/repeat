@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { parseTSV, shuffleArray, loadSettings, saveSettings } from "./utils";
 import { ToggleSVG } from "./components/ToggleSVG";
 import { Card } from "./components/Card";
@@ -25,6 +25,7 @@ function App() {
 
   const [sentences, setSentence] = useState<Sentence[]>([]);
   const [selectedSections, setSelectedSections] = useState<number[]>([]);
+  const [playQueue, setPlayQueue] = useState<Sentence[]>([]);
   const [currentPlayIndex, setCurrentPlayIndex] = useState(0);
   const [bookmarks, setBookmarks] = useState<Set<number>>(new Set());
 
@@ -54,7 +55,11 @@ function App() {
           }
 
           if (Array.isArray(saved.playQueue) && saved.playQueue.length > 0) {
-            // ToDo: playQueueの復元ロジックを実装する
+            // saved.playQueueは文番号の配列なので、Sentence配列に変換する
+            const restored = saved.playQueue
+              .map((no) => parsed.find((s) => s.no === no))
+              .filter(Boolean) as Sentence[];
+            setPlayQueue(restored);
           }
 
           if (Array.isArray(saved.bookmarks) && saved.bookmarks.length > 0) {
@@ -68,6 +73,7 @@ function App() {
           if (typeof saved.currentPlayIndex === "number") {
             setCurrentPlayIndex(saved.currentPlayIndex);
           }
+
           console.log("設定を復元しました:", saved);
           return;
         }
@@ -81,20 +87,23 @@ function App() {
     setSelectedSections(sections);
   }, []);
 
-  // 選択したセクションの文だけを再生キューにする
-  const playQueue = useMemo(() => {
+  const updatePlayQueue = (isRandom: boolean) => {
     const filtered = sentences.filter((s) =>
       selectedSections.includes(s.section)
     );
-    return isRandom ? shuffleArray(filtered) : filtered;
-  }, [sentences, selectedSections, isRandom]);
 
-  const currentSentence = playQueue[currentPlayIndex];
+    const queue = isRandom ? shuffleArray(filtered) : filtered;
 
-  // 再生キューが変わったらインデックスをリセット
-  useEffect(() => {
+    setPlayQueue(queue);
     setCurrentPlayIndex(0);
-  }, [selectedSections]);
+
+    saveSettings({
+      playQueue: queue.map((s) => s.no),
+      currentPlayIndex: 0,
+    });
+  };
+
+  const currentSentence = playQueue[currentPlayIndex] ?? null;
 
   // アニメーションフレームをクリア
   const clearAnimation = () => {
@@ -204,6 +213,13 @@ function App() {
     }
   };
 
+  const updateIndex = (newIndex: number) => {
+    setCurrentPlayIndex(newIndex);
+    saveSettings({
+      currentPlayIndex: newIndex,
+    });
+  };
+
   // 次の文を再生
   const handleNext = () => {
     if (isRepeatOne) {
@@ -212,8 +228,9 @@ function App() {
     }
 
     if (currentPlayIndex < playQueue.length - 1) {
-      setCurrentPlayIndex(currentPlayIndex + 1);
-      playAudio(currentPlayIndex + 1);
+      const nextIndex = currentPlayIndex + 1;
+      updateIndex(nextIndex);
+      playAudio(nextIndex);
     } else {
       setPhase("idle");
       setProgress(0);
@@ -222,21 +239,24 @@ function App() {
 
   const goToNext = () => {
     if (currentPlayIndex < playQueue.length - 1) {
-      setCurrentPlayIndex((i) => i + 1);
+      const nextIndex = currentPlayIndex + 1;
+      updateIndex(nextIndex);
     }
   };
 
   // 前の文を再生
   const handlePrev = () => {
     if (currentPlayIndex > 0) {
-      setCurrentPlayIndex(currentPlayIndex - 1);
-      playAudio(currentPlayIndex - 1);
+      const prevIndex = currentPlayIndex - 1;
+      updateIndex(prevIndex);
+      playAudio(prevIndex);
     }
   };
 
   const goToPrev = () => {
     if (currentPlayIndex > 0) {
-      setCurrentPlayIndex((i) => i - 1);
+      const prevIndex = currentPlayIndex - 1;
+      updateIndex(prevIndex);
     }
   };
 
@@ -311,6 +331,7 @@ function App() {
             saveSettings({
               selectedSections,
             });
+            updatePlayQueue(isRandom);
           }}
         >
           <menu className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -328,6 +349,7 @@ function App() {
                 saveSettings({
                   selectedSections,
                 });
+                updatePlayQueue(isRandom);
               }}
               disabled={selectedSections.length === 0}
             >
@@ -351,7 +373,13 @@ function App() {
         <ToggleSVG
           SVG={ShuffleSVG}
           checked={isRandom}
-          onChange={setIsRandom}
+          onChange={(b) => {
+            setIsRandom(b);
+            saveSettings({
+              isRandom: b,
+            });
+            updatePlayQueue(b);
+          }}
           className="shuffle"
           disabled={phase !== "idle"}
         />
