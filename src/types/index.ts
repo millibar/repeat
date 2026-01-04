@@ -1,7 +1,2 @@
-export type Sentence = {
-  no: number;
-  japanese: string;
-  english: string;
-  audio: string;
-  section: number;
-};
+export * from "./sentence.ts";
+export * from "./practice.ts";

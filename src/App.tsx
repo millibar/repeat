@@ -10,9 +10,8 @@ import {
   ShuffleSVG,
   BookmarkSVG,
 } from "./components/Svg";
-import type { Sentence } from "./types/index.ts";
+import type { Sentence, PracticeMode } from "./types/index.ts";
 
-type PracticeMode = "repeating" | "shadowing";
 type Phase = "idle" | "playing" | "waiting";
 
 function App() {
