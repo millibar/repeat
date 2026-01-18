@@ -81,6 +81,7 @@ function App() {
 
         // 保存データがない場合（returnされない）、全セクションを選択状態にする
         setSelectedSections(allSections);
+        setPlayQueue(parsed);
       });
   }, []);
 
