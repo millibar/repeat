@@ -12,6 +12,8 @@ import {
 } from "./components/Svg";
 import type { Sentence, PracticeMode } from "./types/index.ts";
 
+import { addStudyLog } from "./db/studyLog.ts";
+
 type Phase = "idle" | "playing" | "waiting";
 
 function App() {
@@ -194,10 +196,23 @@ function App() {
   // 最後まで再生したら次の文を再生
   const handleEnded = () => {
     console.log("再生が終了しました");
-    setPhase("waiting");
 
     const audio = audioRef.current;
-    if (!audio) return;
+    const sentence = currentSentence;
+    if (!audio || !sentence) return;
+
+    // 学習ログを保存（非同期）
+    addStudyLog({
+      sentenceNo: sentence.no,
+      section: sentence.section,
+      mode: mode,
+      timestamp: Date.now(),
+      durationMs: Math.round(audio.duration * 1000),
+    }).catch((e) => {
+      console.error("学習ログの保存に失敗しました:", e);
+    });
+
+    setPhase("waiting");
 
     // 再生後に次の文を出すまでの待機時間
     // repeatingモードでは音声ファイルの最後に若干の無音があるため、1秒短くする
