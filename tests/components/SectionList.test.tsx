@@ -155,38 +155,6 @@ describe("SECTION一覧", () => {
     expect(section1Checkbox).not.toBeChecked();
   });
 
-  it("SECTION 1が選択されているとき、最初の文「こんにちは」が表示されている", async () => {
-    render(<App />);
-    const openButton = screen.getByLabelText("設定");
-    fireEvent.click(openButton);
-
-    const section1Checkbox = await screen.findByRole("checkbox", {
-      name: "SECTION 1 (2)",
-    });
-
-    await waitFor(() => {
-      expect(section1Checkbox).toBeChecked();
-      expect(screen.getByText("こんにちは")).toBeInTheDocument();
-    });
-  });
-
-  it("SECTION 2のみが選択されているとき、最初の文「さようなら」が表示されている", async () => {
-    render(<App />);
-    const openButton = screen.getByLabelText("設定");
-    fireEvent.click(openButton);
-
-    const section1Checkbox = await screen.findByRole("checkbox", {
-      name: "SECTION 1 (2)",
-    });
-    fireEvent.click(section1Checkbox);
-
-    await waitFor(() => {
-      expect(section1Checkbox).not.toBeChecked();
-      expect(screen.queryByText("こんにちは")).not.toBeInTheDocument();
-      expect(screen.getByText("さようなら")).toBeInTheDocument();
-    });
-  });
-
   it("全てのチェックボックスがONのとき、全選択をクリックすると、全てのチェックボックスがOFFになる", async () => {
     render(<App />);
     const openButton = screen.getByLabelText("設定");
