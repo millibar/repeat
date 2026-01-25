@@ -7,13 +7,13 @@ export async function addStudyLog(log: StudyLog): Promise<void> {
 }
 
 export async function getStudyLogsSince(
-  fromTimestamp: number
+  fromTimestampMs: number,
 ): Promise<StudyLog[]> {
   const db = await dbPromise;
   const logs = await db.getAllFromIndex(
     "studyLogs",
     "by-timestamp",
-    IDBKeyRange.lowerBound(fromTimestamp)
+    IDBKeyRange.lowerBound(fromTimestampMs),
   );
   return logs;
 }
