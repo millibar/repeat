@@ -29,6 +29,14 @@ describe("aggregateDailySentenceCounts関数", () => {
         timestamp: 1696204800000, // 2023-10-02 00:00:00 UTC
         durationMs: 5000,
       },
+      {
+        id: 3,
+        sentenceNo: 2,
+        section: 1,
+        mode: "shadowing",
+        timestamp: 1696204800000, // 2023-10-02 00:00:00 UTC
+        durationMs: 5000,
+      },
     ];
 
     const result = aggregateDailySentenceCounts(
@@ -38,8 +46,8 @@ describe("aggregateDailySentenceCounts関数", () => {
     ); // 2023-10-02
 
     expect(result).toEqual([
-      { date: "2023-10-01", count: 2 },
-      { date: "2023-10-02", count: 1 },
+      { date: "2023-10-01", repeating: 2, shadowing: 0 },
+      { date: "2023-10-02", repeating: 1, shadowing: 1 },
     ]);
   });
 
@@ -70,8 +78,8 @@ describe("aggregateDailySentenceCounts関数", () => {
     ); // 2023-10-02
 
     expect(result).toEqual([
-      { date: "2023-10-01", count: 2 },
-      { date: "2023-10-02", count: 0 },
+      { date: "2023-10-01", repeating: 2, shadowing: 0 },
+      { date: "2023-10-02", repeating: 0, shadowing: 0 },
     ]);
   });
 });

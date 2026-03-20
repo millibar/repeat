@@ -11,7 +11,8 @@ export type StudyLog = {
 
 export type DailySentenceCount = {
   date: string; // YYYY-MM-DD形式の日付
-  count: number; // その日に学習した文の数
+  repeating: number; // その日にリピーティングした文の数
+  shadowing: number; // その日にシャドーイングした文の数
 };
 
 export type SentenceModeCount = {
