@@ -13,3 +13,9 @@ export type DailySentenceCount = {
   date: string; // YYYY-MM-DD形式の日付
   count: number; // その日に学習した文の数
 };
+
+export type SentenceModeCount = {
+  sentenceNo: number;
+  repeating: number; // 繰り返しモードで学習した回数
+  shadowing: number; // シャドーイングモードで学習した回数
+};

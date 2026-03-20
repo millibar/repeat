@@ -1,4 +1,8 @@
-import type { StudyLog, DailySentenceCount } from "../types/studyLog";
+import type {
+  StudyLog,
+  DailySentenceCount,
+  SentenceModeCount,
+} from "../types/studyLog";
 
 function formatLocalDate(date: Date): string {
   const yyyy = date.getFullYear();
@@ -36,4 +40,31 @@ export function aggregateDailySentenceCounts(
       date,
       count: sentenceNos.length,
     }));
+}
+
+/**
+ * StudyLogのリストから、sentenceNoごとにrepeatingとshadowingの回数を集計する
+ * @param logs StudyLogのリスト
+ * @returns sentenceNoごとにrepeatingとshadowingの回数を集計したSentenceModeCountのリスト
+ */
+export function aggregateSentenceModeCounts(
+  logs: StudyLog[],
+): SentenceModeCount[] {
+  const map = new Map<number, SentenceModeCount>();
+  for (const log of logs) {
+    if (!map.has(log.sentenceNo)) {
+      map.set(log.sentenceNo, {
+        sentenceNo: log.sentenceNo,
+        repeating: 0,
+        shadowing: 0,
+      });
+    }
+    const count = map.get(log.sentenceNo)!;
+    if (log.mode === "repeating") {
+      count.repeating++;
+    } else if (log.mode === "shadowing") {
+      count.shadowing++;
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => a.sentenceNo - b.sentenceNo);
 }
