@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DailySentenceCountList } from "./DailySentenceCountList";
+import { DailySentenceBarChart } from "./DailySentenceBarChart";
 import type { DailySentenceCount, SentenceModeCount } from "../types/studyLog";
 import { getStudyLogsSince } from "../db/studyLog";
 import {
@@ -31,6 +31,7 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
       const aggregated = aggregateDailySentenceCounts(logs, days, today);
 
       setData(aggregated);
+      console.log("Aggregated daily sentence counts:", aggregated);
     }
 
     async function loadProgressData() {
@@ -52,9 +53,9 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
 
   return (
     <div>
-      <DailySentenceCountList data={data} />
       <button onClick={onClose}>Close History</button>
-      {/* Additional history screen content goes here */}
+      <h2>Last 7 Days</h2>
+      <DailySentenceBarChart data={data} />
 
       <h2>Repeating Progress</h2>
       <SentenceProgressGrid
