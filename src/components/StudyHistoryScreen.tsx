@@ -5,6 +5,7 @@ import { getStudyLogsSince } from "../db/studyLog";
 import {
   aggregateDailySentenceCounts,
   aggregateSentenceModeCounts,
+  getCurrentStreak,
 } from "../services/studyLogAggregation";
 import { SentenceProgressGrid } from "./SentenceProgressGrid";
 import { DailyActivityGrid } from "./DailyActivityGrid";
@@ -18,6 +19,7 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
 }) => {
   const [data, setData] = useState<DailySentenceCount[]>([]);
   const [progressData, setProgressData] = useState<SentenceModeCount[]>([]);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     async function loadLastXdays(days: number) {
@@ -43,6 +45,7 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
       const aggregated = aggregateSentenceModeCounts(logs);
 
       setProgressData(aggregated);
+      setStreak(getCurrentStreak(logs, today));
     }
 
     async function load() {
@@ -60,6 +63,11 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
   return (
     <>
       <button onClick={onClose}>Close History</button>
+      <h1>Study History</h1>
+      <h2>
+        {streak === 0 ? "Start your streak today!" : `${streak}-Day Streak`}
+      </h2>
+
       <h2>Last 7 Days</h2>
       <DailySentenceBarChart data={last7days} />
 
