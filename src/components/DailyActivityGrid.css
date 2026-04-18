@@ -1,0 +1,20 @@
+.daily-activity-grid {
+    display: grid;
+    grid-template-columns: repeat(28, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 1px;
+    width: 100%;
+    max-width: 587px; /* 20px * 28 columns + 1px * 27 gaps */
+}
+
+.cell {
+    width: 100%;
+    max-width: 20px;
+    aspect-ratio: 1 / 1;
+    border-radius: 3px;
+    background: #e5e7eb;
+}
+
+.cell.active {
+    background-color: #e76c8b;
+}

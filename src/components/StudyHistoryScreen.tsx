@@ -7,6 +7,7 @@ import {
   aggregateSentenceModeCounts,
 } from "../services/studyLogAggregation";
 import { SentenceProgressGrid } from "./SentenceProgressGrid";
+import { DailyActivityGrid } from "./DailyActivityGrid";
 
 type StudyHistoryScreenProps = {
   onClose: () => void;
@@ -19,8 +20,7 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
   const [progressData, setProgressData] = useState<SentenceModeCount[]>([]);
 
   useEffect(() => {
-    async function loadLast7days() {
-      const days = 7;
+    async function loadLastXdays(days: number) {
       const today = new Date();
 
       const from = new Date(today);
@@ -28,10 +28,7 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
       from.setHours(0, 0, 0, 0);
 
       const logs = await getStudyLogsSince(from.getTime());
-      const aggregated = aggregateDailySentenceCounts(logs, days, today);
-
-      setData(aggregated);
-      console.log("Aggregated daily sentence counts:", aggregated);
+      return aggregateDailySentenceCounts(logs, days, today);
     }
 
     async function loadProgressData() {
@@ -44,18 +41,32 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
 
       const logs = await getStudyLogsSince(from.getTime());
       const aggregated = aggregateSentenceModeCounts(logs);
+
       setProgressData(aggregated);
     }
 
-    loadLast7days();
+    async function load() {
+      const allDays = 28 * 7;
+      const aggregated = await loadLastXdays(allDays);
+      setData(aggregated);
+    }
+
+    load();
     loadProgressData();
   }, []);
 
+  const last7days = data.slice(-7);
+
   return (
-    <div>
+    <>
       <button onClick={onClose}>Close History</button>
       <h2>Last 7 Days</h2>
-      <DailySentenceBarChart data={data} />
+      <DailySentenceBarChart data={last7days} />
+
+      <h2>
+        Daily Activity <small>at least once a day</small>
+      </h2>
+      <DailyActivityGrid data={data} />
 
       <h2>Repeating Progress</h2>
       <SentenceProgressGrid
@@ -70,6 +81,6 @@ export const StudyHistoryScreen: React.FC<StudyHistoryScreenProps> = ({
         mode="shadowing"
         totalSentences={560}
       />
-    </div>
+    </>
   );
 };
