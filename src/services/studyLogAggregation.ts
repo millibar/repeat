@@ -76,3 +76,41 @@ export function aggregateSentenceModeCounts(
   }
   return Array.from(map.values()).sort((a, b) => a.sentenceNo - b.sentenceNo);
 }
+
+/**
+ * StudyLogのリストから、今日を含めた連続している日数を計算する
+ * @param logs StudyLogのリスト
+ * @param today 今日の日付
+ * @returns 今日を含めた連続している日数
+ */
+export function getCurrentStreak(logs: StudyLog[], today: Date): number {
+  const practicedDays = new Set<string>();
+
+  for (const log of logs) {
+    const d = new Date(log.timestamp);
+    const key = formatLocalDate(d);
+    practicedDays.add(key);
+  }
+
+  let streak = 0;
+  const cursor = new Date(today);
+  cursor.setHours(0, 0, 0, 0);
+
+  // 今日やってなければ昨日から開始
+  if (!practicedDays.has(formatLocalDate(cursor))) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  while (true) {
+    const key = formatLocalDate(cursor);
+
+    if (practicedDays.has(key)) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
