@@ -7,7 +7,7 @@ import {
 } from "../../utils.ts";
 import { ToggleSVG } from "../common/ToggleSVG.tsx";
 import { Card } from "./Card.tsx";
-import { SectionList } from "./SectionList.tsx";
+import { SettingsModal } from "./SettingsModal.tsx";
 import {
   SettingsButtonSVG,
   CalendarSVG,
@@ -302,6 +302,18 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
     });
   };
 
+  const handleCloseSettings = () => {
+    if (selectedSections.length === 0) return;
+
+    setIsSettingsOpen(false);
+
+    saveSettings({
+      selectedSections,
+    });
+
+    updatePlayQueue(isRandom);
+  };
+
   return (
     <>
       <div className="mode">
@@ -346,43 +358,13 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
       >
         <SettingsButtonSVG />
       </button>
-      {isSettingsOpen && (
-        <div
-          className="modal-overlay"
-          onClick={() => {
-            if (selectedSections.length > 0) {
-              setIsSettingsOpen(false);
-            }
-            saveSettings({
-              selectedSections,
-            });
-            updatePlayQueue(isRandom);
-          }}
-        >
-          <menu className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>再生するSECTIONにチェック</h2>
-            <SectionList
-              sentences={sentences}
-              selectedSections={selectedSections}
-              onChange={handleChange}
-            />
-
-            <button
-              className="close"
-              onClick={() => {
-                setIsSettingsOpen(false);
-                saveSettings({
-                  selectedSections,
-                });
-                updatePlayQueue(isRandom);
-              }}
-              disabled={selectedSections.length === 0}
-            >
-              閉じる
-            </button>
-          </menu>
-        </div>
-      )}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        sentences={sentences}
+        selectedSections={selectedSections}
+        onChange={handleChange}
+        onClose={handleCloseSettings}
+      />
 
       <audio ref={audioRef} onEnded={handleEnded} preload="auto" />
 
