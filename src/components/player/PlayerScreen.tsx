@@ -15,6 +15,8 @@ import {
   ShuffleSVG,
   BookmarkSVG,
 } from "../common/Svg.tsx";
+import { PlayerControls } from "./PlayerControls.tsx";
+
 import type { Sentence, PracticeMode } from "../../types/index.ts";
 
 import { addStudyLog } from "../../db/studyLog.ts";
@@ -268,6 +270,13 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
     }
   };
 
+  const handleNextClick = () => {
+    goToNext();
+    if (phase !== "idle") {
+      playAudio(currentPlayIndex + 1);
+    }
+  };
+
   // 前の文を再生
   const handlePrev = () => {
     if (currentPlayIndex > 0) {
@@ -281,6 +290,14 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
     if (currentPlayIndex > 0) {
       const prevIndex = currentPlayIndex - 1;
       updateIndex(prevIndex);
+    }
+  };
+
+  const handlePrevClick = () => {
+    if (phase !== "idle") {
+      handlePrev();
+    } else {
+      goToPrev();
     }
   };
 
@@ -396,37 +413,15 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
         <progress className={phase} value={progress} max={100} />
       </div>
 
-      <div className="controls">
-        <button
-          onClick={() => {
-            if (phase !== "idle") {
-              handlePrev();
-            } else {
-              goToPrev();
-            }
-          }}
-          disabled={currentPlayIndex === 0}
-        >
-          ＜
-        </button>
-        <button onClick={handlePlayClick} disabled={phase !== "idle"}>
-          ▶
-        </button>
-        <button onClick={handleStopClick} disabled={phase === "idle"}>
-          ■
-        </button>
-        <button
-          onClick={() => {
-            goToNext();
-            if (phase !== "idle") {
-              playAudio(currentPlayIndex + 1);
-            }
-          }}
-          disabled={currentPlayIndex === playQueue.length - 1}
-        >
-          ＞
-        </button>
-      </div>
+      <PlayerControls
+        phase={phase}
+        currentPlayIndex={currentPlayIndex}
+        lastIndex={playQueue.length - 1}
+        onPrev={handlePrevClick}
+        onPlay={handlePlayClick}
+        onStop={handleStopClick}
+        onNext={handleNextClick}
+      />
 
       {currentSentence && (
         <section className="sentence">
