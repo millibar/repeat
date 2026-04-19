@@ -5,21 +5,18 @@ import {
   loadSettings,
   saveSettings,
 } from "../../utils.ts";
+import { addStudyLog } from "../../db/studyLog.ts";
+
 import { ToggleSVG } from "../common/ToggleSVG.tsx";
 import { SettingsModal } from "./SettingsModal.tsx";
-import {
-  SettingsButtonSVG,
-  CalendarSVG,
-  RepeatOneSVG,
-  ShuffleSVG,
-} from "../common/Svg.tsx";
+import { RepeatOneSVG, ShuffleSVG } from "../common/Svg.tsx";
 import { PlayerControls } from "./PlayerControls.tsx";
 import { SentenceViewer } from "./SentenceViewer.tsx";
 
-import type { Sentence, PracticeMode } from "../../types/index.ts";
-
-import { addStudyLog } from "../../db/studyLog.ts";
 import { ModeSelector } from "./ModeSelector.tsx";
+import { Navigation } from "./Navigation.tsx";
+
+import type { Sentence, PracticeMode } from "../../types/index.ts";
 
 type Phase = "idle" | "playing" | "waiting";
 
@@ -339,23 +336,11 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
         onChange={setMode}
       />
 
-      <button
-        className="calendar-button"
+      <Navigation
         disabled={phase !== "idle"}
-        aria-label="学習履歴"
-        onClick={onOpenHistory}
-      >
-        <CalendarSVG />
-      </button>
-
-      <button
-        className="settings-button"
-        onClick={() => setIsSettingsOpen(true)}
-        disabled={phase !== "idle"}
-        aria-label="設定"
-      >
-        <SettingsButtonSVG />
-      </button>
+        onOpenHistory={onOpenHistory}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+      />
 
       <SettingsModal
         isOpen={isSettingsOpen}
