@@ -6,16 +6,15 @@ import {
   saveSettings,
 } from "../../utils.ts";
 import { ToggleSVG } from "../common/ToggleSVG.tsx";
-import { Card } from "./Card.tsx";
 import { SettingsModal } from "./SettingsModal.tsx";
 import {
   SettingsButtonSVG,
   CalendarSVG,
   RepeatOneSVG,
   ShuffleSVG,
-  BookmarkSVG,
 } from "../common/Svg.tsx";
 import { PlayerControls } from "./PlayerControls.tsx";
+import { SentenceViewer } from "./SentenceViewer.tsx";
 
 import type { Sentence, PracticeMode } from "../../types/index.ts";
 
@@ -424,20 +423,14 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
       />
 
       {currentSentence && (
-        <section className="sentence">
-          <h1>SECTION {currentSentence.section}</h1>
-          <h2 className="bookmark">
-            <ToggleSVG
-              SVG={BookmarkSVG}
-              checked={bookmarks.has(currentSentence.no)}
-              onChange={() => toggleBookmark(currentSentence.no)}
-              text={`No. ${currentSentence.no}`}
-            />
-          </h2>
-
-          <Card sentence={currentSentence.english} language="english" />
-          <Card sentence={currentSentence.japanese} language="japanese" />
-        </section>
+        <SentenceViewer
+          section={currentSentence.section}
+          sentenceNo={currentSentence.no}
+          english={currentSentence.english}
+          japanese={currentSentence.japanese}
+          bookmarked={bookmarks.has(currentSentence.no)}
+          onToggleBookmark={() => toggleBookmark(currentSentence.no)}
+        />
       )}
     </>
   );
