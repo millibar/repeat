@@ -17,7 +17,7 @@ export const DailyActivityGrid: React.FC<Props> = ({ data }) => {
   });
 
   return (
-    <div className="daily-activity-grid">
+    <div className="grid daily-activity-grid">
       {grid.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           const hasActivity =

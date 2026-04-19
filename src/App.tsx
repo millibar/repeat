@@ -8,7 +8,7 @@ function App() {
   const [screen, setScreen] = useState<Screen>("player");
 
   return (
-    <main className="app">
+    <main className={`app ${screen}`}>
       {screen === "player" ? (
         <PlayerScreen onOpenHistory={() => setScreen("history")} />
       ) : (

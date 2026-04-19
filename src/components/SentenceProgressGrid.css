@@ -1,27 +1,29 @@
-.sentence-progress-grid {
-  display: grid;
-  grid-template-columns: repeat(28, 1fr);
-  gap: 1px;
-  width: 100%;
-  max-width: 587px; /* 20px * 28 columns + 1px * 27 gaps */
+.history {
+  /* ===== repeating（青系） ===== */
+  .repeating.level-1 {
+    background: var(--color-repeating-1);
+  }
+  .repeating.level-2 {
+    background: var(--color-repeating-2);
+  }
+  .repeating.level-3 {
+    background: var(--color-repeating-3);
+  }
+  .repeating.level-4 {
+    background: var(--color-repeating-4);
+  }
+
+  /* ===== shadowing（緑系） ===== */
+  .shadowing.level-1 {
+    background: var(--color-shadowing-1);
+  }
+  .shadowing.level-2 {
+    background: var(--color-shadowing-2);
+  }
+  .shadowing.level-3 {
+    background: var(--color-shadowing-3);
+  }
+  .shadowing.level-4 {
+    background: var(--color-shadowing-4);
+  }
 }
-
-.cell {
-    width: 100%;
-    max-width: 20px;
-    aspect-ratio: 1 / 1;
-    border-radius: 3px;
-    background: #e5e7eb; /* level-0 default */
-}
-
-/* ===== repeating（青系） ===== */
-.repeating.level-1 { background: #dbeafe; }
-.repeating.level-2 { background: #93c5fd; }
-.repeating.level-3 { background: #3b82f6; }
-.repeating.level-4 { background: #1e40af; }
-
-/* ===== shadowing（緑系） ===== */
-.shadowing.level-1 { background: #dcfce7; }
-.shadowing.level-2 { background: #86efac; }
-.shadowing.level-3 { background: #22c55e; }
-.shadowing.level-4 { background: #166534; }

@@ -9,6 +9,7 @@ import {
 } from "../services/studyLogAggregation";
 import { SentenceProgressGrid } from "./SentenceProgressGrid";
 import { DailyActivityGrid } from "./DailyActivityGrid";
+import "./StudyHistoryScreen.css";
 
 type StudyHistoryScreenProps = {
   onClose: () => void;

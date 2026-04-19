@@ -1,0 +1,43 @@
+.history {
+  padding: 16px;
+
+  --color-empty: #edeef3;
+
+  /* ===== repeating（青系） ===== */
+  --color-repeating-1: #dbeafe;
+  --color-repeating-2: #93c5fd;
+  --color-repeating-3: #3b82f6;
+  --color-repeating-4: #1e40af;
+
+  /* ===== shadowing（緑系） ===== */
+  --color-shadowing-1: #dcfce7;
+  --color-shadowing-2: #86efac;
+  --color-shadowing-3: #22c55e;
+  --color-shadowing-4: #166534;
+
+  h1 {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+
+  h2 {
+    margin: 16px 0 6px;
+    font-size: 120%;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(28, 1fr);
+    gap: 1px;
+    width: 100%;
+    max-width: 587px; /* 20px * 28 columns + 1px * 27 gaps */
+  }
+
+  .cell {
+    width: 100%;
+    max-width: 20px;
+    aspect-ratio: 1 / 1;
+    border-radius: 3px;
+    background: var(--color-empty);
+  }
+}

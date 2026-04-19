@@ -39,5 +39,5 @@ export const SentenceProgressGrid: React.FC<Props> = ({
     );
   }
 
-  return <div className="sentence-progress-grid">{cells}</div>;
+  return <div className="grid sentence-progress-grid">{cells}</div>;
 };
