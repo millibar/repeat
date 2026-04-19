@@ -19,6 +19,7 @@ import { SentenceViewer } from "./SentenceViewer.tsx";
 import type { Sentence, PracticeMode } from "../../types/index.ts";
 
 import { addStudyLog } from "../../db/studyLog.ts";
+import { ModeSelector } from "./ModeSelector.tsx";
 
 type Phase = "idle" | "playing" | "waiting";
 
@@ -332,30 +333,11 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
 
   return (
     <>
-      <div className="mode">
-        <label>
-          <input
-            type="radio"
-            name="mode"
-            value="repeating"
-            checked={mode === "repeating"}
-            onChange={() => setMode("repeating")}
-            disabled={phase !== "idle"}
-          />
-          Repeating
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="mode"
-            value="shadowing"
-            checked={mode === "shadowing"}
-            onChange={() => setMode("shadowing")}
-            disabled={phase !== "idle"}
-          />
-          Shadowing
-        </label>
-      </div>
+      <ModeSelector
+        mode={mode}
+        disabled={phase !== "idle"}
+        onChange={setMode}
+      />
 
       <button
         className="calendar-button"
@@ -374,6 +356,7 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
       >
         <SettingsButtonSVG />
       </button>
+
       <SettingsModal
         isOpen={isSettingsOpen}
         sentences={sentences}
