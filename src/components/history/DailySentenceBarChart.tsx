@@ -1,5 +1,5 @@
 import React from "react";
-import type { DailySentenceCount } from "../types/studyLog";
+import type { DailySentenceCount } from "../../types/studyLog";
 import "./DailySentenceBarChart.css";
 
 type Props = {

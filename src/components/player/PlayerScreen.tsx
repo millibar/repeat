@@ -1,18 +1,23 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { parseTSV, shuffleArray, loadSettings, saveSettings } from "../utils";
-import { ToggleSVG } from "./ToggleSVG";
-import { Card } from "./Card";
-import { SectionList } from "./SectionList";
+import {
+  parseTSV,
+  shuffleArray,
+  loadSettings,
+  saveSettings,
+} from "../../utils.ts";
+import { ToggleSVG } from "../common/ToggleSVG.tsx";
+import { Card } from "./Card.tsx";
+import { SectionList } from "./SectionList.tsx";
 import {
   SettingsButtonSVG,
   CalendarSVG,
   RepeatOneSVG,
   ShuffleSVG,
   BookmarkSVG,
-} from "./Svg";
-import type { Sentence, PracticeMode } from "../types/index.ts";
+} from "../common/Svg.tsx";
+import type { Sentence, PracticeMode } from "../../types/index.ts";
 
-import { addStudyLog } from "../db/studyLog.ts";
+import { addStudyLog } from "../../db/studyLog.ts";
 
 type Phase = "idle" | "playing" | "waiting";
 

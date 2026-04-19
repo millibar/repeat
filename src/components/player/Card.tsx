@@ -1,5 +1,5 @@
 import React from "react";
-import { EyeSVG } from "./Svg";
+import { EyeSVG } from "../common/Svg";
 
 type Language = "japanese" | "english";
 

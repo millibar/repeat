@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { PlayerScreen } from "./components/PlayerScreen";
-import { StudyHistoryScreen } from "./components/StudyHistoryScreen";
+import { PlayerScreen } from "./components/player/PlayerScreen";
+import { StudyHistoryScreen } from "./components/history/StudyHistoryScreen";
 
 function App() {
   type Screen = "player" | "history";

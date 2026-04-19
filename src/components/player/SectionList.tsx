@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { makeSectionStats } from "../utils";
-import type { Sentence } from "../types/index.ts";
+import { makeSectionStats } from "../../utils";
+import type { Sentence } from "../../types/index.ts";
 
 type SectionListProps = {
   sentences: Sentence[];
@@ -28,7 +28,7 @@ export function SectionList({
   const selectedCount = selectedSections.length;
   const selectedSentences = selectedSections.reduce(
     (sum, sec) => sum + (sectionStats[sec] || 0),
-    0
+    0,
   );
   const allSelected = selectedCount === allSections.length;
 

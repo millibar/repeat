@@ -1,5 +1,5 @@
 import React from "react";
-import type { SentenceModeCount, PracticeMode } from "../types";
+import type { SentenceModeCount, PracticeMode } from "../../types";
 import "./SentenceProgressGrid.css";
 
 type Props = {

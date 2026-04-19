@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { DailySentenceBarChart } from "./DailySentenceBarChart";
-import type { DailySentenceCount, SentenceModeCount } from "../types/studyLog";
-import { getStudyLogsSince } from "../db/studyLog";
+import type {
+  DailySentenceCount,
+  SentenceModeCount,
+} from "../../types/studyLog";
+import { getStudyLogsSince } from "../../db/studyLog";
 import {
   aggregateDailySentenceCounts,
   aggregateSentenceModeCounts,
   getCurrentStreak,
-} from "../services/studyLogAggregation";
+} from "../../services/studyLogAggregation";
 import { SentenceProgressGrid } from "./SentenceProgressGrid";
 import { DailyActivityGrid } from "./DailyActivityGrid";
 import "./StudyHistoryScreen.css";
