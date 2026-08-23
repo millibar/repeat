@@ -7,10 +7,9 @@ import {
 } from "../../utils.ts";
 import { addStudyLog } from "../../db/studyLog.ts";
 
-import { ToggleSVG } from "../common/ToggleSVG.tsx";
 import { SettingsModal } from "./SettingsModal.tsx";
-import { RepeatOneSVG, ShuffleSVG } from "../common/Svg.tsx";
 import { PlayerControls } from "./PlayerControls.tsx";
+import { PlayerOptions } from "./PlayerOptions.tsx";
 import { SentenceViewer } from "./SentenceViewer.tsx";
 
 import { ModeSelector } from "./ModeSelector.tsx";
@@ -352,29 +351,21 @@ export function PlayerScreen({ onOpenHistory }: PlayerScreenProps) {
 
       <audio ref={audioRef} onEnded={handleEnded} preload="auto" />
 
-      <div className="options">
-        {currentPlayIndex + 1} / {playQueue.length}{" "}
-        <ToggleSVG
-          SVG={RepeatOneSVG}
-          checked={isRepeatOne}
-          onChange={setIsRepeatOne}
-          className="repeat-one"
-          disabled={phase !== "idle"}
-        />
-        <ToggleSVG
-          SVG={ShuffleSVG}
-          checked={isRandom}
-          onChange={(b) => {
-            setIsRandom(b);
-            saveSettings({
-              isRandom: b,
-            });
-            updatePlayQueue(b);
-          }}
-          className="shuffle"
-          disabled={phase !== "idle"}
-        />
-      </div>
+      <PlayerOptions
+        current={currentPlayIndex + 1}
+        total={playQueue.length}
+        isRepeatOne={isRepeatOne}
+        isRandom={isRandom}
+        disabled={phase !== "idle"}
+        onRepeatOneChange={setIsRepeatOne}
+        onRandomChange={(b) => {
+          setIsRandom(b);
+          saveSettings({
+            isRandom: b,
+          });
+          updatePlayQueue(b);
+        }}
+      />
 
       <div className="progress">
         <progress className={phase} value={progress} max={100} />

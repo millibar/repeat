@@ -93,7 +93,7 @@ button.calendar-button {
 }
 
 button.settings-button {
-  right: 8px; 
+  right: 8px;
 }
 
 button.calendar-button:disabled,
@@ -119,8 +119,12 @@ div.options {
   padding: 0;
 }
 
+div.options span {
+  display: inline-block;
+}
+
 div.options svg {
-  margin-left: 0.5em;
+  margin-right: 0.8em;
 }
 
 label.toggle svg {
@@ -174,7 +178,7 @@ progress.waiting::-webkit-progress-value {
 
 progress.idle::-moz-progress-bar,
 progress.playing::-moz-progress-bar,
-progress.waiting::-moz-progress-value{
+progress.waiting::-moz-progress-value {
   background-color: var(--color-progress-idle);
 }
 
@@ -184,7 +188,7 @@ progress.waiting::-webkit-progress-bar {
 }
 
 progress.playing::-moz-progress-value,
-progress.waiting::-moz-progress-bar{
+progress.waiting::-moz-progress-bar {
   background-color: var(--color-progress-playing);
 }
 
@@ -330,7 +334,7 @@ button {
   background: var(--color-background-button);
   color: var(--color-text);
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent
+  -webkit-tap-highlight-color: transparent;
 }
 
 button:disabled {
@@ -346,8 +350,6 @@ button:disabled {
   border: 1px solid #eee;
   box-shadow: none;
 }
-
-
 
 .modal-overlay {
   position: fixed;
